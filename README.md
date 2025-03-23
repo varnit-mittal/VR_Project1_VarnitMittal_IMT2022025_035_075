@@ -148,3 +148,85 @@ In addition to CNN, we compared its performance against traditional ML classifie
 - The **CNN model significantly outperformed the SVM classifier** (96.81% vs. 89%).
 - The **Neural Network (MLP) performed well** but was slightly behind CNN (92%).
 - The best CNN model used **Adam optimizer with batch size 64**.
+
+
+
+
+Subtask (c): Region Segmentation Using Traditional Techniques
+--------------------------------------------------------------------------------
+## Overview
+
+This subtask focuses on segmenting the mask regions for faces identified as "with mask" using traditional segmentation techniques. We implement and compare three different region-based segmentation methods:
+
+- **Gaussian Mixture Model (GMM)**
+- **Otsu's Thresholding**
+- **Watershed Algorithm**
+
+The segmentation results are evaluated against ground truth masks using Intersection over Union (IoU) and Dice Score.
+
+## Implementation
+
+The segmentation methods are implemented using OpenCV and Scikit-learn.
+
+### 1. **Gaussian Mixture Model (GMM) Segmentation**
+
+The Gaussian Mixture Model is applied to grayscale pixel intensities to separate foreground (mask) from the background.
+
+- The grayscale image is reshaped into a 1D array of pixel intensities.
+- GMM with two components (mask and background) is trained.
+- The brighter region is assigned as the mask.
+
+### 2. **Otsu's Thresholding**
+
+A global threshold is selected automatically using Otsu’s method to separate the foreground from the background.
+
+- The grayscale image is binarized using Otsu’s threshold.
+- The obtained binary mask is used for segmentation.
+
+### 3. **Watershed Algorithm**
+
+This method is based on the distance transform and morphological operations.
+
+- Noise is removed using morphological opening.
+- Background and foreground regions are identified using distance transformation.
+- Watershed segmentation is applied to distinguish the mask region.
+
+## Evaluation Metrics
+
+Two key metrics are used to evaluate the segmentation accuracy:
+
+- **Intersection over Union (IoU):** Measures the overlap between predicted and ground truth masks.
+- **Dice Score:** Computes the similarity between the predicted and ground truth masks.
+
+## Dataset
+
+- **Input:** Cropped face images from `../dataset/face_crop`
+- **Ground Truth:** Corresponding segmentation masks from `../dataset/face_crop_segmentation`
+
+## Results Visualization
+
+For each image, the original, ground truth, and segmented masks (GMM, Otsu, Watershed) are displayed side by side along with the computed IoU and Dice scores.
+
+## Example Output
+
+The segmentation results are visualized with corresponding IoU and Dice scores:
+
+```
+GMM Segmentation
+IoU: 0.65, Dice: 0.78
+
+Otsu Segmentation
+IoU: 0.63, Dice: 0.78
+
+Watershed Segmentation
+IoU: 0.02, Dice: 0.04
+```
+
+## Conclusion and Observations
+
+- GMM provides robust segmentation when the foreground and background have distinct intensity distributions.
+- Otsu’s method is simple but may fail in cases with uneven lighting.
+- The Watershed algorithm works well when proper preprocessing is applied.
+
+Each method has its strengths and weaknesses, making them suitable for different scenarios in mask segmentation.
+
