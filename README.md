@@ -230,3 +230,61 @@ IoU: 0.02, Dice: 0.04
 
 Each method has its strengths and weaknesses, making them suitable for different scenarios in mask segmentation.
 
+
+
+
+
+Subtask (d): Face Mask Segmentation using U-Net
+-------------------------------------------------------------------------------
+
+## Overview
+This project implements a U-Net-based deep learning model for face mask detection and segmentation. The model is trained to segment masks from facial images using a dataset of masked and unmasked faces. 
+
+## Dataset
+- **Images:** Stored in `dataset/image`
+- **Masks:** Stored in `dataset/mask`
+- **Preprocessing:** Images are resized to `128x128`, normalized, and converted to RGB format. Masks are binarized (0 for no mask, 1 for mask) and reshaped accordingly.
+- **Training data shape:** `(1000, 128, 128, 3)` (Images)
+- **Labels shape:** `(1000, 128, 128, 1)` (Mask segmentations)
+
+## Model Architecture
+The U-Net model consists of:
+- **Encoder:** Four down-sampling blocks with convolutional, batch normalization, dropout, and max-pooling layers.
+- **Bottleneck:** Two convolutional layers with batch normalization and dropout.
+- **Decoder:** Four up-sampling blocks with transposed convolutions, concatenation, and batch normalization.
+- **Output Layer:** A `1x1` convolution with a sigmoid activation function for binary mask segmentation.
+
+## Metrics
+The model evaluates segmentation using:
+- **IoU (Intersection over Union)**
+- **Dice Coefficient**
+
+## Loss Function
+- **Binary Crossentropy (BCE) Loss**
+- **Dice Loss** (for better handling of class imbalance)
+- **Combined Loss**: `BCE + Dice Loss`
+
+## Training Details
+- **Optimizer:** Adam (learning rate `1e-3`)
+- **Batch Size:** `16`
+- **Epochs:** `50`
+- **Validation Split:** `20%`
+
+## Model Performance
+
+| Model       | Whole (IoU, Dice) | Validation (IoU, Dice) |
+|------------|------------------|----------------------|
+| Combined   | 82,89            | 75,85               |
+| Dice Loss  | 81,89            | 79,88               |
+| 82IoU90Dice | 82,90            | 76,86               |
+| Leaky ReLU | 82,89            | 79,88               |
+| 256ReLU    | 83,90            | 75,83               |
+| Dice Loss, | 83,90            | 78,87               |
+
+## Training Parameters
+
+- **START_FILTERS** = 64  # Starting number of filters, all others are multiples of this  
+- **DROPOUT_RATE** = 0.3  # Dropout rate to reduce overfitting  
+- **LEARNING_RATE** = 1e-4  # Lower learning rate for stable convergence  
+- **BATCH_SIZE** = 16  
+- **EPOCHS** = 100  
