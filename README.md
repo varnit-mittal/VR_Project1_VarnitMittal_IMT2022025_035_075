@@ -1,9 +1,6 @@
 VR MINI PROJECT - README
 ============================
 
-Project Overview
-----------------
-
 # Masked vs. Unmasked Face Classification
 
 ## Overview
