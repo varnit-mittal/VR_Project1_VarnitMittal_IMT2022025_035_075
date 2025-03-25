@@ -99,24 +99,49 @@ Images are stored in respective folders:
 Subtask (b): Binary Classification using CNN
 --------------------------------------------------------------------------------
 
-## Project Overview
-This task implements a binary classification model using a Convolutional Neural Network (CNN) to detect face masks in images. The dataset consists of images with and without masks, and the goal is to classify each image correctly.
 
-## Model Architecture
-The CNN model consists of:
-1. **Three Convolutional Layers** with ReLU activation
-2. **Max Pooling Layers** after each convolutional block
-3. **Flattening Layer**
-4. **Fully Connected Dense Layer** (128 neurons, ReLU activation)
-5. **Dropout Layer** (0.5 dropout rate)
-6. **Final Dense Layer** (1 neuron, Sigmoid activation for binary classification)
+### **1. Introduction**
+This project aims to classify images of people as **with mask** or **without mask** using Convolutional Neural Networks (CNNs) and traditional Machine Learning (ML) classifiers. The Methodology involves:
+- Designing and training a **CNN** for binary classification.
+- Exploring hyperparameter variations to optimize CNN performance.
+- Extracting **handcrafted features (HOG)** and comparing CNN results with **ML classifiers** (SVM and MLP).
 
-### Model Compilation
-- **Loss Function:** Binary Crossentropy
-- **Optimizers Tested:** Adam, SGD
-- **Evaluation Metric:** Accuracy
+This study helps in understanding deep learning-based and traditional ML-based approaches for image classification.
 
-## Hyperparameter Experiments and Results
+### **2. Dataset**
+The [dataset](https://github.com/chandrikadeb7/Face-Mask-Detection/tree/master/dataset) consists of labeled images of individuals **with and without face masks**. It is structured into two folders:
+- `with_mask/` – Images of people wearing masks.
+- `without_mask/` – Images of people without masks.
+
+Each image is resized to **64×64 pixels** and normalized to **[0,1]** before feeding into the models.
+
+
+### **3. Data Preprocessing**
+- Images are loaded, converted to RGB (for CNN) and grayscale (for ML classifiers).
+- Resized to **64×64 pixels** to ensure uniformity.
+- Pixel values are normalized for CNN training.
+
+### **4. Model Architecture**
+- A sequential **CNN architecture** with:
+  - **Three convolutional layers** (32, 64, 128 filters, 3×3 kernel, ReLU activation).
+  - **MaxPooling** layers (2×2).
+  - A **fully connected Dense layer** (128 neurons, ReLU).
+  - A final **binary classification layer** (1 neuron, Sigmoid activation).
+- Trained with **Binary Cross-Entropy loss** and **Adam/SGD optimizers**.
+- Metric used is **Accuracy**
+
+#### **Best Hyperparameters**
+| **Hyperparameter**   | **Value**  |
+|----------------------|-----------|
+| **Learning Rate**    | 0.0001    |
+| **Optimizer**        | Adam      |
+| **Batch Size**       | 32        |
+| **Epochs**           | 50        |
+| **Loss Function**    | Binary Cross-Entropy |
+| **Dropout Rate**     | 0.3 (after Dense layer) |
+| **Weight Initialization** | He Normal |
+
+### **5. Experiments**
 Several hyperparameter variations were tested to improve model performance:
 
 | Experiment Name | Learning Rate | Optimizer | Batch Size | Accuracy |
@@ -129,28 +154,29 @@ Several hyperparameter variations were tested to improve model performance:
 
 The best-performing model used Adam optimizer with a batch size of 64, achieving an accuracy of **96.81%**.
 
-## Comparison with ML Classifiers
+### **6. Comparison with ML Classifiers**
 In addition to CNN, we compared its performance against traditional ML classifiers using HOG features.
 
-### **SVM Classifier Performance**
+#### **SVM Classifier Performance**
 - **Accuracy:** 0.89
 - **Precision:** 0.86 (No Mask), 0.91 (Mask)
 - **Recall:** 0.89 (No Mask), 0.89 (Mask)
 - **F1-score:** 0.87 (No Mask), 0.90 (Mask)
 
-### **Neural Network (MLP) Classifier Performance**
+#### **Neural Network (MLP) Classifier Performance**
 - **Accuracy:** 0.92
 - **Precision:** 0.90 (No Mask), 0.93 (Mask)
 - **Recall:** 0.92 (No Mask), 0.92 (Mask)
 - **F1-score:** 0.91 (No Mask), 0.92 (Mask)
 
-## Conclusion
-- The **CNN model significantly outperformed the SVM classifier** (96.81% vs. 89%).
-- The **Neural Network (MLP) performed well** but was slightly behind CNN (92%).
-- The best CNN model used **Adam optimizer with batch size 64**.
-
-
-
+## **7. Observations and Analysis**
+- **CNN models outperform ML classifiers** due to their ability to learn spatial features directly from images.
+- **SVM with HOG** performed better than MLP but still lagged behind CNN.
+- **Hyperparameter tuning** affects CNN performance significantly:
+  - **Lower learning rates** resulted in better convergence.
+  - **SGD optimizer** had slower convergence compared to **Adam**.
+  - **Larger batch sizes** improved training stability but sometimes reduced test accuracy.
+  - The best CNN model used **Adam optimizer with batch size 64**.
 
 Subtask (c): Region Segmentation Using Traditional Techniques
 --------------------------------------------------------------------------------
