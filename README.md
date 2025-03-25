@@ -341,7 +341,7 @@ U-Net was compared with a **threshold-based segmentation** method using **IoU an
 
 Thus, U-Net **significantly outperforms** traditional methods in both **IoU and Dice Score**, making it a more reliable choice for precise mask segmentation.
 
-## Challenges Faced
+### Challenges Faced
 
 1. **Data-Related Challenges**
 
