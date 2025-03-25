@@ -1,6 +1,3 @@
-README
-============================
-
 # Masked vs. Unmasked Face Classification
 
 ## Overview
