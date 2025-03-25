@@ -1,4 +1,4 @@
-VR MINI PROJECT - README
+README
 ============================
 
 # Masked vs. Unmasked Face Classification
