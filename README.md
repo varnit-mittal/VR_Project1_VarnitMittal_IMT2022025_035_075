@@ -326,7 +326,7 @@ U-Net was compared with a **threshold-based segmentation** method using **IoU an
 
 | **Method**                  | **IoU (%)** | **Dice Score (%)** |
 |-----------------------------|------------|--------------------|
-| **Traditional (Thresholding + Morphology)** | 72.85       | 84.32               |
+| **Traditional Methods** | 58.15       | 72.67               |
 | **U-Net (with Post-Processing)** | **88.45**  | **93.35**         |
 
 #### **Why U-Net is Better?**  
