@@ -341,22 +341,22 @@ U-Net was compared with a **threshold-based segmentation** method using **IoU an
 
 Thus, U-Net **significantly outperforms** traditional methods in both **IoU and Dice Score**, making it a more reliable choice for precise mask segmentation.
 
-### Challenges Faced
+## Challenges Faced
 
-1. **Data-Related Challenges**
+- **Data-Related Challenges**
 
-- **Dataset Quality**: Some images were blurry, low resolution, or had occlusions, which affected model training and performance.
-- **Preprocessing Complexity**: Different datasets had varying resolutions, lighting conditions, and face orientations, requiring extensive preprocessing.
+  - **Dataset Quality**: Some images were blurry, low resolution, or had occlusions, which affected model training and performance.
+  - **Preprocessing Complexity**: Different datasets had varying resolutions, lighting conditions, and face orientations, requiring extensive preprocessing.
 
-2. **Feature Extraction & Traditional ML Issues**
-- **HOG Feature Selection**: Finding the right pixel and block size parameters for HOG to maximize accuracy was time-consuming.
+- **Feature Extraction & Traditional ML Issues**
+  - **HOG Feature Selection**: Finding the right pixel and block size parameters for HOG to maximize accuracy was time-consuming.
 
-- **Hyperparameter Tuning for SVM and MLP**: Tuning SVM’s kernel and MLP’s architecture required multiple experiments with cross-validation.
+  - **Hyperparameter Tuning for SVM and MLP**: Tuning SVM’s kernel and MLP’s architecture required multiple experiments with cross-validation.
 
-- **Computational Cost of GridSearchCV**: Running exhaustive hyperparameter tuning was computationally expensive.
+  - **Computational Cost of GridSearchCV**: Running exhaustive hyperparameter tuning was computationally expensive.
 
-3. **Computational and Resource Limitations**
-- **Limited GPU Access**: Training CNNs and U-Net models on a CPU took significantly longer. GPU acceleration was needed but not always available.
+- **Computational and Resource Limitations**
+  - **Limited GPU Access**: Training CNNs and U-Net models on a CPU took significantly longer. GPU acceleration was needed but not always available.
 
-- **Memory Constraints**: Loading high-resolution images and large models consumed a lot of memory, leading to performance issues.
+  - **Memory Constraints**: Loading high-resolution images and large models consumed a lot of memory, leading to performance issues.
 
