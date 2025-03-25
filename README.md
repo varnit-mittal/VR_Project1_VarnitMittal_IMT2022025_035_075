@@ -4,70 +4,53 @@ VR MINI PROJECT - README
 Project Overview
 ----------------
 
-This project aims to classify images of faces as either "with mask" or "without mask" using various machine learning techniques.
+# Masked vs. Unmasked Face Classification
 
-Subtask (a): Binary Classification Using Handcrafted Features and ML Classifiers
---------------------------------------------------------------------------------
+## Overview
+This part of the mini-project aims to classify images of faces as either "with mask" or "without mask" using various machine learning techniques, including traditional handcrafted feature extraction and deep learning-based Convolutional Neural Networks (CNNs).
+
+---
+## Part A: Binary Classification Using Handcrafted Features and ML Classifiers
 
 ### Objectives
-
-*   Extract handcrafted features from the dataset using Histogram of Oriented Gradients (HOG).
-    
-*   Train and evaluate at least two machine learning classifiers (SVM and Neural Network).
-    
-*   Report and compare the accuracy of the classifiers.
-    
+- Extract handcrafted features using Histogram of Oriented Gradients (HOG).
+- Train and evaluate machine learning classifiers (SVM and Neural Network).
+- Compare model performances in terms of accuracy and other metrics.
 
 ### Dataset
+The [dataset](https://github.com/chandrikadeb7/Face-Mask-Detection/tree/master/dataset) consists of two categories:
+- **With Mask**: Images of faces wearing masks.
+- **Without Mask**: Images of faces without masks.
 
-The dataset consists of two categories:
-
-*   **With Mask**: Images of faces wearing masks.
-    
-*   **Without Mask**: Images of faces without masks.
-    
-
-Images are stored in respective folders:
+Dataset folder structure:
 ```
 ./dataset/with_mask
 ./dataset/without_mask
 ```
 
-### Implementation Details
+### Methodology
+#### 1. Data Loading and Preprocessing
+- Images are read in **grayscale** format.
+- Each image is resized to **64x64 pixels**.
+- Labels assigned: `1` for "with mask", `0` for "without mask".
 
-1.  **Data Loading and Preprocessing**
-    
-    *   Images are read in grayscale format.
-        
-    *   Each image is resized to **64x64 pixels**.
-        
-    *   Labels are assigned: 1 for "with mask", 0 for "without mask".
-        
-2.  **Feature Extraction**
-    
-    *   Histogram of Oriented Gradients (HOG) is used to extract features from images.
-        
-    *   Parameters used:
-        
-        *   pixels\_per\_cell = (8,8)
-            
-        *   cells\_per\_block = (2,2)
-            
-        *   feature\_vector = True
-            
-3.  **Model Training and Evaluation**
-    
-    *   Data is split into **80% training** and **20% testing**.
-        
-    *   **SVM (Support Vector Machine)** classifier with hyperparameter tuning via GridSearchCV.
-        
-    *   **Neural Network (MLPClassifier)** with a 2-layer architecture (128, 64 neurons per layer) trained for 500 iterations.
-        
-4.  **Performance Evaluation**
-    
-    *   Classification reports for both models are generated.
-        
-    *   Metrics used: **Precision, Recall, F1-Score, and Accuracy**.
+#### 2. Feature Extraction
+- **Histogram of Oriented Gradients (HOG)** is used for feature extraction.
+- Parameters used:
+  - `pixels_per_cell = (8, 8)`
+  - `cells_per_block = (2, 2)`
+  - `feature_vector = True`
+
+#### 3. Model Training and Evaluation
+- Data is split into **80% training** and **20% testing**.
+- **SVM (Support Vector Machine)** classifier is trained with hyperparameter tuning using GridSearchCV.
+- **Best SVM Parameters**: `{'C': 10, 'kernel': 'rbf'}`
+- **Neural Network (MLPClassifier)** with a **2-layer architecture (128, 64 neurons per layer)** is trained for 500 iterations.
+- **Best MLP Parameters**: `hidden_layer_sizes=(128, 64), max_iter=500`
+
+#### 4. Performance Evaluation
+- Classification reports generated for both models.
+- Metrics used: **Precision, Recall, F1-Score, and Accuracy**.
 
 ### Results
 #### SVM Classifier Performance:
@@ -84,100 +67,61 @@ Images are stored in respective folders:
 | Recall       | 0.92             | 0.93          |                 |
 | F1-Score     | 0.91             | 0.93          |                 |
 
+### Observations
+- The **SVM classifier** achieved **95% accuracy**, outperforming the Neural Network model.
+- The **Neural Network classifier** reached **92% accuracy**, slightly lower than SVM.
+- SVM performed better in terms of precision and recall.
+
+---
+## Part B: Binary Classification Using CNN
+
+### Objectives
+- Develop a **CNN-based model** for classifying masked and unmasked faces.
+- Perform **hyperparameter tuning** to optimize performance.
+- Compare CNN results with traditional ML classifiers (SVM and MLP).
+
+
+### Methodology
+#### Data Preprocessing
+- Images are resized to **64×64 pixels**.
+- Pixel values are **normalized to [0,1]**.
+
+#### CNN Model Architecture
+The model consists of:
+- **3 Convolutional Layers** (with ReLU activation and MaxPooling)
+- **Flattening Layer**
+- **Fully Connected Dense Layers** (128 neurons with ReLU activation)
+- **Dropout Layer (50%)**
+- **Final Output Layer** (1 neuron with Sigmoid activation)
+
+#### Training Strategy
+- **Loss Function**: Binary Cross-Entropy
+- **Optimizers**: Adam, SGD
+- **Batch Sizes**: 32, 64
+- **Learning Rates**: 0.0001, 0.001, 0.01
+- **Epochs**: 30
+
+### Experiments
+| Experiment Name   | Learning Rate | Optimizer | Batch Size | Final Activation | Accuracy | Description |
+|------------------|--------------|----------|------------|-----------------|----------|-------------|
+| Baseline        | 0.001        | Adam     | 32         | Sigmoid         | 0.9730   | Standard configuration with moderate learning rate, Adam optimizer, and batch size of 32. |
+| Low LR          | 0.0001       | Adam     | 32         | Sigmoid         | 0.9693   | Experimenting with a lower learning rate to test stability and convergence. |
+| High LR         | 0.01         | Adam     | 32         | Sigmoid         | 0.9387   | Testing the impact of a higher learning rate, which might lead to instability. |
+| SGD Optimizer   | 0.001        | SGD      | 32         | Sigmoid         | 0.8601   | Changing the optimizer to SGD to compare against Adam. |
+| Larger Batch    | 0.001        | Adam     | 64         | Sigmoid         | 0.9706   | Doubling the batch size to observe its impact on training stability and accuracy. |
 
 ### Observations
+- The **CNN model outperformed traditional methods**, achieving **97.3% accuracy**.
+- Lower learning rates improved stability, but very high rates (0.01) degraded performance.
+- **Adam performed significantly better than SGD** in most cases.
+- Increasing the batch size had **no major impact on accuracy**.
 
-*   The **SVM classifier** achieved **95% accuracy**, outperforming the Neural Network model.
-    
-*   The **Neural Network classifier** reached **92% accuracy**, which is slightly lower than SVM.
-    
-*   SVM performed slightly better in terms of precision and recall.
-
-
-
-
-Subtask (b): Binary Classification using CNN
---------------------------------------------------------------------------------
-
-
-### **1. Introduction**
-This project aims to classify images of people as **with mask** or **without mask** using Convolutional Neural Networks (CNNs) and traditional Machine Learning (ML) classifiers. The Methodology involves:
-- Designing and training a **CNN** for binary classification.
-- Exploring hyperparameter variations to optimize CNN performance.
-- Extracting **handcrafted features (HOG)** and comparing CNN results with **ML classifiers** (SVM and MLP).
-
-This study helps in understanding deep learning-based and traditional ML-based approaches for image classification.
-
-### **2. Dataset**
-The [dataset](https://github.com/chandrikadeb7/Face-Mask-Detection/tree/master/dataset) consists of labeled images of individuals **with and without face masks**. It is structured into two folders:
-- `with_mask/` – Images of people wearing masks.
-- `without_mask/` – Images of people without masks.
-
-Each image is resized to **64×64 pixels** and normalized to **[0,1]** before feeding into the models.
-
-
-### **3. Data Preprocessing**
-- Images are loaded, converted to RGB (for CNN) and grayscale (for ML classifiers).
-- Resized to **64×64 pixels** to ensure uniformity.
-- Pixel values are normalized for CNN training.
-
-### **4. Model Architecture**
-- A sequential **CNN architecture** with:
-  - **Three convolutional layers** (32, 64, 128 filters, 3×3 kernel, ReLU activation).
-  - **MaxPooling** layers (2×2).
-  - A **fully connected Dense layer** (128 neurons, ReLU).
-  - A final **binary classification layer** (1 neuron, Sigmoid activation).
-- Trained with **Binary Cross-Entropy loss** and **Adam/SGD optimizers**.
-- Metric used is **Accuracy**
-
-#### **Best Hyperparameters**
-| **Hyperparameter**   | **Value**  |
-|----------------------|-----------|
-| **Learning Rate**    | 0.0001    |
-| **Optimizer**        | Adam      |
-| **Batch Size**       | 32        |
-| **Epochs**           | 50        |
-| **Loss Function**    | Binary Cross-Entropy |
-| **Dropout Rate**     | 0.3 (after Dense layer) |
-| **Weight Initialization** | He Normal |
-
-### **5. Experiments**
-Several hyperparameter variations were tested to improve model performance:
-
-| Experiment Name | Learning Rate | Optimizer | Batch Size | Accuracy |
-|---------------|--------------|------------|------------|----------|
-| Baseline | 0.001 | Adam | 32 | to fill |
-| Low LR | 0.0001 | Adam | 32 | 0.9620 |
-| High LR | 0.01 | Adam | 32 | 0.9301 |
-| SGD Optimizer | 0.001 | SGD | 32 | 0.8933 |
-| Larger Batch | 0.001 | Adam | 64 | 0.9681 |
-
-The best-performing model used Adam optimizer with a batch size of 64, achieving an accuracy of **96.81%**.
-
-### **6. Comparison with ML Classifiers**
-In addition to CNN, we compared its performance against traditional ML classifiers using HOG features.
-
-#### **SVM Classifier Performance**
-- **Accuracy:** 0.89
-- **Precision:** 0.86 (No Mask), 0.91 (Mask)
-- **Recall:** 0.89 (No Mask), 0.89 (Mask)
-- **F1-score:** 0.87 (No Mask), 0.90 (Mask)
-
-#### **Neural Network (MLP) Classifier Performance**
-- **Accuracy:** 0.92
-- **Precision:** 0.90 (No Mask), 0.93 (Mask)
-- **Recall:** 0.92 (No Mask), 0.92 (Mask)
-- **F1-score:** 0.91 (No Mask), 0.92 (Mask)
-
-## **7. Observations and Analysis**
-- **CNN models outperform ML classifiers** due to their ability to learn spatial features directly from images.
-- **SVM with HOG** performed better than MLP but still lagged behind CNN.
-- **Hyperparameter tuning** affects CNN performance significantly:
-  - **Lower learning rates** resulted in better convergence.
-  - **SGD optimizer** had slower convergence compared to **Adam**.
-  - **Larger batch sizes** improved training stability but sometimes reduced test accuracy.
-  - The best CNN model used **Adam optimizer with batch size 64**.
-
+### Conclusion
+- **CNN-based models** provided **higher accuracy** than traditional approaches.
+- **SVM performed better than MLPClassifier** in traditional methods.
+- The best CNN experiment achieved **97.3% accuracy**, significantly improving upon SVM (95%).
+- This study highlights the **superiority of deep learning models** for image-based classification tasks.
+  
 Subtask (c): Region Segmentation Using Traditional Techniques
 --------------------------------------------------------------------------------
 ## Overview
@@ -378,34 +322,24 @@ The following variations were explored:
 - **Post-processing (smoothing, morphological closing) significantly improved** the results.  
 
 ---
-## **9. Challenges Faced**  
-
-1. **Training Time and Compute Limitations:**  
-   - Training on high-resolution images required extensive computational resources.  
-   - Due to resource constraints, the model was trained on a **subset of 1000 images** instead of the full dataset to reduce training time while maintaining reasonable performance.  
-
-2. **Over-Sharp Predictions:**  
-   - The predicted masks initially had overly sharp boundaries compared to the ground truth.  
-   - This issue was mitigated using **post-processing techniques**, including **morphological closing** and **Gaussian blurring**, to produce smoother and more natural segmentation masks.
   
-## **10. Comparison with Traditional Segmentation Methods**  
+## **9. Comparison with Traditional Segmentation**  
 
-To assess the effectiveness of the U-Net model, its performance was compared with a **traditional threshold-based segmentation method** using **IoU and Dice Score** metrics.  
+U-Net was compared with a **threshold-based segmentation** method using **IoU and Dice Score** metrics.  
 
 | **Method**                  | **IoU (%)** | **Dice Score (%)** |
 |-----------------------------|------------|--------------------|
-| **Traditional Segmentation** (Thresholding + Morphology) | 72.85       | 84.32               |
-| **U-Net (Best Model with Post-Processing)** | **88.45**  | **93.35**         |
+| **Traditional (Thresholding + Morphology)** | 72.85       | 84.32               |
+| **U-Net (with Post-Processing)** | **88.45**  | **93.35**         |
 
-### **Why U-Net Outperforms Traditional Methods?**  
+### **Why U-Net is Better?**  
 
-1. **Learned Features vs. Handcrafted Rules:**  
-   - Traditional methods rely on fixed thresholding and morphological operations, making them sensitive to lighting variations, noise, and occlusions.  
-   - U-Net **learns hierarchical features** from the data, allowing it to generalize better across varying image conditions.  
+1. **Learned Features vs. Fixed Rules:**  
+   - Traditional methods use fixed thresholds, making them **sensitive to noise and lighting**.  
+   - U-Net **learns patterns**, adapting to different conditions.  
 
 2. **Context Awareness:**  
-   - Unlike traditional methods that focus only on pixel intensity, U-Net **captures spatial context** using convolutional layers and skip connections.  
-   - This helps in accurately segmenting **complex mask shapes** that thresholding-based methods often fail to detect.  
+   - U-Net captures **spatial relationships**, segmenting complex mask shapes **more accurately** than simple pixel-based methods.
 
 3. **Robustness to Variability:**  
    - The dataset contains images with diverse lighting, occlusions, and mask variations.  
