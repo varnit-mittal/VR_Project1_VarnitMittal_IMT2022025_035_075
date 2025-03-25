@@ -237,54 +237,154 @@ Each method has its strengths and weaknesses, making them suitable for different
 Subtask (d): Face Mask Segmentation using U-Net
 -------------------------------------------------------------------------------
 
-## Overview
-This project implements a U-Net-based deep learning model for face mask detection and segmentation. The model is trained to segment masks from facial images using a dataset of masked and unmasked faces. 
+## **1. Introduction**  
+This part of the mini-project focuses on segmenting masked face regions using deep learning-based image segmentation techniques. The primary objective is to train a U-Net model to precisely detect and segment mask regions in images and compare its performance with traditional segmentation methods using evaluation metrics like Intersection over Union (IoU) and Dice Score.  
 
-## Dataset
-- **Images:** Stored in `dataset/image`
-- **Masks:** Stored in `dataset/mask`
-- **Preprocessing:** Images are resized to `128x128`, normalized, and converted to RGB format. Masks are binarized (0 for no mask, 1 for mask) and reshaped accordingly.
-- **Training data shape:** `(1000, 128, 128, 3)` (Images)
-- **Labels shape:** `(1000, 128, 128, 1)` (Mask segmentations)
+## **2. Dataset**  
 
-## Model Architecture
-The U-Net model consists of:
-- **Encoder:** Four down-sampling blocks with convolutional, batch normalization, dropout, and max-pooling layers.
-- **Bottleneck:** Two convolutional layers with batch normalization and dropout.
-- **Decoder:** Four up-sampling blocks with transposed convolutions, concatenation, and batch normalization.
-- **Output Layer:** A `1x1` convolution with a sigmoid activation function for binary mask segmentation.
+The dataset used for this project contains face images with ground truth mask annotations. Each image has a corresponding binary mask that marks the mask region.  
 
-## Metrics
-The model evaluates segmentation using:
-- **IoU (Intersection over Union)**
-- **Dice Coefficient**
+- **Source**: [Dataset](https://github.com/sadjadrz/MFSD).  
+- **Structure**:  
+  - `face_crop/` – Contains RGB face images.  
+  - `face_crop_segmentation/` – Corresponding grayscale mask images.  
 
-## Loss Function
-- **Binary Crossentropy (BCE) Loss**
-- **Dice Loss** (for better handling of class imbalance)
-- **Combined Loss**: `BCE + Dice Loss`
+Each image and its corresponding mask were resized to a uniform dimension of **128×128** (or **256×256** in some experiments).  Due to computational constraints, the model was trained on a **subset of 1000 images** instead of the full dataset. This allowed for faster experimentation while maintaining strong segmentation performance.
 
-## Training Details
-- **Optimizer:** Adam (learning rate `1e-3`)
-- **Batch Size:** `16`
-- **Epochs:** `50`
-- **Validation Split:** `20%`
+---
 
-## Model Performance
+## **3. Methodology**  
 
-| Model       | Whole (IoU, Dice) | Validation (IoU, Dice) |
-|------------|------------------|----------------------|
-| Combined   | 82,89            | 75,85               |
-| Dice Loss  | 81,89            | 79,88               |
-| 82IoU90Dice | 82,90            | 76,86               |
-| Leaky ReLU | 82,89            | 79,88               |
-| 256ReLU    | 83,90            | 75,83               |
-| Dice Loss, | 83,90            | 78,87               |
+### **Data Preprocessing**  
+1. Images were read using OpenCV and converted to RGB format.  
+2. Resized to the chosen input size (**128×128** or **256×256**).  
+3. Normalized pixel values to the range **[0,1]**.  
+4. Masks were read as grayscale, resized, and expanded to include a single channel.  
 
-## Training Parameters
+---
 
-- **START_FILTERS** = 64  # Starting number of filters, all others are multiples of this  
-- **DROPOUT_RATE** = 0.3  # Dropout rate to reduce overfitting  
-- **LEARNING_RATE** = 1e-4  # Lower learning rate for stable convergence  
-- **BATCH_SIZE** = 16  
-- **EPOCHS** = 100  
+## **4. Model Architecture**  
+The U-Net model used in this project follows an encoder-decoder structure with skip connections to preserve spatial information. The key components of the architecture include:  
+
+1. **Convolutional Blocks:**  
+   - Each block consists of **two convolutional layers** with a kernel size of **3×3**, followed by **batch normalization** and **dropout** for regularization.  
+   - **LeakyReLU** is used as the activation function instead of ReLU for better gradient flow.  
+
+2. **Feature Scaling:**  
+   - The number of filters starts at **64** and doubles at each downsampling stage (64 → 128 → 256 → 512 → 1024) in the encoder.  
+   - In the decoder, the number of filters decreases symmetrically by a factor of **2** at each upsampling stage (1024 → 512 → 256 → 128 → 64).  
+
+3. **Downsampling & Upsampling:**  
+   - **Max-pooling** is used to reduce the spatial dimensions in the encoder.  
+   - **UpSampling2D** is used to restore the resolution in the decoder, followed by concatenation with corresponding encoder feature maps.  
+
+4. **Output Layer:**  
+   - A **1×1 convolution** is applied at the final layer with a **sigmoid activation** to generate a binary mask.  
+
+This architecture enables effective feature extraction while maintaining fine details in the segmentation output.
+
+---
+
+## **5. Training Details**  
+- **Loss Functions**: **Dice Loss**  
+- **Optimizer**: Adam with a learning rate of **1e-3**.  
+- **Metrics**: IoU and Dice Score.  
+- **Batch Size**: 16  
+- **Epochs**: 50  
+- **Dropout Rate**: 0.3
+---
+
+## **6. Post-Processing**  
+After segmentation, the raw output mask may contain small artifacts or sharp boundaries. To refine the mask, the following post-processing steps were applied:  
+
+1. **Thresholding:**  
+   - The predicted mask is thresholded at **0.5** to obtain a binary mask.  
+
+2. **Morphological Closing:**  
+   - A **7×7 kernel** is used to remove small holes inside the detected mask regions, making the segmentation more coherent.  
+
+3. **Gaussian Blurring:**  
+   - A **3×3 Gaussian blur** is applied to smoothen the mask edges and create a more natural-looking boundary.  
+
+These refinements help reduce noise, improve mask continuity, and enhance segmentation accuracy.
+
+---
+
+## **7. Results**  
+The performance of different model variations was evaluated using **Intersection over Union (IoU)** and **Dice Score**, two key metrics for segmentation quality. The best-performing model incorporated **Dice loss, LeakyReLU activation, and post-processing techniques**, achieving:  
+
+- **Whole dataset:** **IoU = 88.45%**, **Dice Score = 93.35%**  
+- **Validation dataset:** **IoU = 84.32%**, **Dice Score = 90.79%**  
+
+The inclusion of post-processing significantly improved the mask smoothness, reducing sharp artifacts in the segmentation output.
+
+### **Example Predictions**  
+
+#### **Random Sample (Good Segmentation)**  
+_Example where the model successfully segments the mask:_  
+![image](https://github.com/user-attachments/assets/e9105528-27d1-4317-9732-ba8fbd391eaf)
+
+#### **Min IoU Case (Failure Case)**  
+_Example where the model struggles with segmentation:_  
+![image](https://github.com/user-attachments/assets/af994d16-b6b6-42ee-a6c2-2c9498c71f2d)
+
+#### **Max IoU Case (Best Segmentation)**  
+_Example where the model's prediction closely matches the ground truth:_  
+![image](https://github.com/user-attachments/assets/30d0c77a-f626-429d-923d-ac58e8da178b)
+
+---
+
+## **8. Hyperparameters and Experiments**  
+The following variations were explored:  
+
+| **Model Variant** | **Whole Dataset (IoU, Dice)** | **Validation Set (IoU, Dice)** |  
+|------------------|----------------------------|----------------------------|  
+| BCE + Dice Loss | 80.23, 89.01 | 75.23, 85.d |  
+| Dice Loss | 80.11, 89.21 | 77.29, 88.78 |  
+| BCE Loss | 80.15, 90.85 | 76.77, 86.81 |  
+| Leaky ReLU | 82.21, 89.73 | 76.12, 87.22 |  
+| **256×256 Image Size, Dice Loss** | 82.10, 90.02 | 75.17, 83.06 |  
+| Dice Loss + Leaky ReLU | 81.58, 89.34 | 79.51, 88.04 |  
+| **Best Model: Dice Loss + Leaky ReLU + Post-Processing** | **88.45, 93.35** | **84.32, 90.79** |  
+
+### **Key Observations:**  
+- **LeakyReLU activation** improved performance compared to ReLU.  
+- **Dice loss performed better** than BCE loss.  
+- **Larger input size (256×256)** did not necessarily yield better validation results.  
+- **Post-processing (smoothing, morphological closing) significantly improved** the results.  
+
+---
+## **9. Challenges Faced**  
+
+1. **Training Time and Compute Limitations:**  
+   - Training on high-resolution images required extensive computational resources.  
+   - Due to resource constraints, the model was trained on a **subset of 1000 images** instead of the full dataset to reduce training time while maintaining reasonable performance.  
+
+2. **Over-Sharp Predictions:**  
+   - The predicted masks initially had overly sharp boundaries compared to the ground truth.  
+   - This issue was mitigated using **post-processing techniques**, including **morphological closing** and **Gaussian blurring**, to produce smoother and more natural segmentation masks.
+  
+## **10. Comparison with Traditional Segmentation Methods**  
+
+To assess the effectiveness of the U-Net model, its performance was compared with a **traditional threshold-based segmentation method** using **IoU and Dice Score** metrics.  
+
+| **Method**                  | **IoU (%)** | **Dice Score (%)** |
+|-----------------------------|------------|--------------------|
+| **Traditional Segmentation** (Thresholding + Morphology) | 72.85       | 84.32               |
+| **U-Net (Best Model with Post-Processing)** | **88.45**  | **93.35**         |
+
+### **Why U-Net Outperforms Traditional Methods?**  
+
+1. **Learned Features vs. Handcrafted Rules:**  
+   - Traditional methods rely on fixed thresholding and morphological operations, making them sensitive to lighting variations, noise, and occlusions.  
+   - U-Net **learns hierarchical features** from the data, allowing it to generalize better across varying image conditions.  
+
+2. **Context Awareness:**  
+   - Unlike traditional methods that focus only on pixel intensity, U-Net **captures spatial context** using convolutional layers and skip connections.  
+   - This helps in accurately segmenting **complex mask shapes** that thresholding-based methods often fail to detect.  
+
+3. **Robustness to Variability:**  
+   - The dataset contains images with diverse lighting, occlusions, and mask variations.  
+   - U-Net can adapt to these variations, whereas traditional segmentation struggles with consistency.  
+
+Thus, U-Net **significantly outperforms** traditional methods in both **IoU and Dice Score**, making it a more reliable choice for precise mask segmentation.
