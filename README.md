@@ -279,9 +279,7 @@ Each image and its corresponding mask were resized to a uniform dimension of **1
 
 ---
 
-## **3. Methodology**  
-
-### **Data Preprocessing**  
+## **3. Data Preprocessing**  
 1. Images were read using OpenCV and converted to RGB format.  
 2. Resized to the chosen input size (**128×128** or **256×256**).  
 3. Normalized pixel values to the range **[0,1]**.  
