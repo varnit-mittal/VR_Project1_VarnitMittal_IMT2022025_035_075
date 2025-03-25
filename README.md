@@ -204,10 +204,10 @@ Each method has its strengths and weaknesses, making them suitable for different
 Subtask (d): Face Mask Segmentation using U-Net
 -------------------------------------------------------------------------------
 
-## **1. Introduction**  
+#### **Introduction**  
 This part of the mini-project focuses on segmenting masked face regions using deep learning-based image segmentation techniques. The primary objective is to train a U-Net model to precisely detect and segment mask regions in images and compare its performance with traditional segmentation methods using evaluation metrics like Intersection over Union (IoU) and Dice Score.  
 
-## **2. Dataset**  
+### **Dataset**  
 
 The dataset used for this project contains face images with ground truth mask annotations. Each image has a corresponding binary mask that marks the mask region.  
 
@@ -220,7 +220,7 @@ Each image and its corresponding mask were resized to a uniform dimension of **1
 
 ---
 
-## **3. Data Preprocessing**  
+### **Data Preprocessing**  
 1. Images were read using OpenCV and converted to RGB format.  
 2. Resized to the chosen input size (**128×128** or **256×256**).  
 3. Normalized pixel values to the range **[0,1]**.  
@@ -228,7 +228,7 @@ Each image and its corresponding mask were resized to a uniform dimension of **1
 
 ---
 
-## **4. Model Architecture**  
+### **Model Architecture**  
 The U-Net model used in this project follows an encoder-decoder structure with skip connections to preserve spatial information. The key components of the architecture include:  
 
 1. **Convolutional Blocks:**  
@@ -250,7 +250,7 @@ This architecture enables effective feature extraction while maintaining fine de
 
 ---
 
-## **5. Training Details**  
+### **Training Details**  
 - **Loss Functions**: **Dice Loss**  
 - **Optimizer**: Adam with a learning rate of **1e-3**.  
 - **Metrics**: IoU and Dice Score.  
@@ -259,7 +259,7 @@ This architecture enables effective feature extraction while maintaining fine de
 - **Dropout Rate**: 0.3
 ---
 
-## **6. Post-Processing**  
+### **Post-Processing**  
 After segmentation, the raw output mask may contain small artifacts or sharp boundaries. To refine the mask, the following post-processing steps were applied:  
 
 1. **Thresholding:**  
@@ -275,7 +275,7 @@ These refinements help reduce noise, improve mask continuity, and enhance segmen
 
 ---
 
-## **7. Results**  
+### **Results**  
 The performance of different model variations was evaluated using **Intersection over Union (IoU)** and **Dice Score**, two key metrics for segmentation quality. The best-performing model incorporated **Dice loss, LeakyReLU activation, and post-processing techniques**, achieving:  
 
 - **Whole dataset:** **IoU = 88.45%**, **Dice Score = 93.35%**  
@@ -283,23 +283,23 @@ The performance of different model variations was evaluated using **Intersection
 
 The inclusion of post-processing significantly improved the mask smoothness, reducing sharp artifacts in the segmentation output.
 
-### **Example Predictions**  
+#### **Example Predictions**  
 
-#### **Random Sample (Good Segmentation)**  
+###### **Random Sample (Good Segmentation)**  
 _Example where the model successfully segments the mask:_  
 ![image](https://github.com/user-attachments/assets/e9105528-27d1-4317-9732-ba8fbd391eaf)
 
-#### **Min IoU Case (Failure Case)**  
+###### **Min IoU Case (Failure Case)**  
 _Example where the model struggles with segmentation:_  
 ![image](https://github.com/user-attachments/assets/af994d16-b6b6-42ee-a6c2-2c9498c71f2d)
 
-#### **Max IoU Case (Best Segmentation)**  
+###### **Max IoU Case (Best Segmentation)**  
 _Example where the model's prediction closely matches the ground truth:_  
 ![image](https://github.com/user-attachments/assets/30d0c77a-f626-429d-923d-ac58e8da178b)
 
 ---
 
-## **8. Experiments**  
+### **Experiments**  
 The following variations were explored:  
 
 | **Model Variant** | **Whole Dataset (IoU, Dice)** | **Validation Set (IoU, Dice)** |  
@@ -312,7 +312,7 @@ The following variations were explored:
 | Dice Loss + Leaky ReLU | 81.58, 89.34 | 79.51, 88.04 |  
 | **Best Model: Dice Loss + Leaky ReLU + Post-Processing** | **88.45, 93.35** | **84.32, 90.79** |  
 
-### **Key Observations:**  
+#### **Key Observations:**  
 - **LeakyReLU activation** improved performance compared to ReLU.  
 - **Dice loss performed better** than BCE loss.  
 - **Larger input size (256×256)** did not necessarily yield better validation results.  
@@ -320,7 +320,7 @@ The following variations were explored:
 
 ---
   
-## **9. Comparison with Traditional Segmentation**  
+### **Comparison with Traditional Segmentation**  
 
 U-Net was compared with a **threshold-based segmentation** method using **IoU and Dice Score** metrics.  
 
@@ -329,7 +329,7 @@ U-Net was compared with a **threshold-based segmentation** method using **IoU an
 | **Traditional (Thresholding + Morphology)** | 72.85       | 84.32               |
 | **U-Net (with Post-Processing)** | **88.45**  | **93.35**         |
 
-### **Why U-Net is Better?**  
+#### **Why U-Net is Better?**  
 
 1. **Learned Features vs. Fixed Rules:**  
    - Traditional methods use fixed thresholds, making them **sensitive to noise and lighting**.  
