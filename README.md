@@ -118,24 +118,28 @@ The model consists of:
 - **SVM performed better than MLPClassifier** in traditional methods.
 - The best CNN experiment achieved **97.3% accuracy**, significantly improving upon SVM (95%).
 - This study highlights the **superiority of deep learning models** for image-based classification tasks.
-  
-Subtask (c): Region Segmentation Using Traditional Techniques
---------------------------------------------------------------------------------
+
+# Face Mask Segmentation
 ## Overview
+This project implements region-based segmentation using traditional techniques like thresholding and edge detection to segment mask regions in images. Additionally, a U-Net model is trained for precise mask segmentation, with performance compared against traditional methods using IoU and Dice scores. The results are visualized and evaluated to assess segmentation accuracy.
 
-This subtask focuses on segmenting the mask regions for faces identified as "with mask" using traditional segmentation techniques. We implement and compare three different region-based segmentation methods:
+## Dataset
 
-- **Gaussian Mixture Model (GMM)**
-- **Otsu's Thresholding**
-- **Watershed Algorithm**
+The dataset used for this project contains face images with ground truth mask annotations. Each image has a corresponding binary mask that marks the mask region.  
 
-The segmentation results are evaluated against ground truth masks using Intersection over Union (IoU) and Dice Score.
+- **Source**: [Dataset](https://github.com/sadjadrz/MFSD).  
+- **Structure**:  
+  - `face_crop/` – Contains RGB face images.  
+  - `face_crop_segmentation/` – Corresponding grayscale mask images.  
 
-## Implementation
+## Part C: Region Segmentation Using Traditional Techniques
+
+
+### Implementation
 
 The segmentation methods are implemented using OpenCV and Scikit-learn.
 
-### 1. **Gaussian Mixture Model (GMM) Segmentation**
+#### 1. **Gaussian Mixture Model (GMM) Segmentation**
 
 The Gaussian Mixture Model is applied to grayscale pixel intensities to separate foreground (mask) from the background.
 
@@ -143,14 +147,14 @@ The Gaussian Mixture Model is applied to grayscale pixel intensities to separate
 - GMM with two components (mask and background) is trained.
 - The brighter region is assigned as the mask.
 
-### 2. **Otsu's Thresholding**
+#### 2. **Otsu's Thresholding**
 
 A global threshold is selected automatically using Otsu’s method to separate the foreground from the background.
 
 - The grayscale image is binarized using Otsu’s threshold.
 - The obtained binary mask is used for segmentation.
 
-### 3. **Watershed Algorithm**
+#### 3. **Watershed Algorithm**
 
 This method is based on the distance transform and morphological operations.
 
@@ -158,23 +162,29 @@ This method is based on the distance transform and morphological operations.
 - Background and foreground regions are identified using distance transformation.
 - Watershed segmentation is applied to distinguish the mask region.
 
-## Evaluation Metrics
+### Evaluation Metrics
 
 Two key metrics are used to evaluate the segmentation accuracy:
 
 - **Intersection over Union (IoU):** Measures the overlap between predicted and ground truth masks.
 - **Dice Score:** Computes the similarity between the predicted and ground truth masks.
 
-## Dataset
 
-- **Input:** Cropped face images from `../dataset/face_crop`
-- **Ground Truth:** Corresponding segmentation masks from `../dataset/face_crop_segmentation`
-
-## Results Visualization
+### Results Visualization
 
 For each image, the original, ground truth, and segmented masks (GMM, Otsu, Watershed) are displayed side by side along with the computed IoU and Dice scores.
 
-## Example Output
+###### **Random Sample (Good Segmentation)**  
+_Example where the model successfully segments the mask:_  
+![image](https://github.com/varnit-mittal/VRminiProj/blob/main/assets/output.png)
+
+###### **Min IoU Case (Failure Case)**  
+_Example where the model struggles with segmentation:_  
+![image](https://github.com/varnit-mittal/VRminiProj/blob/main/assets/output2.png)
+
+
+
+### Example Output
 
 The segmentation results are visualized with corresponding IoU and Dice scores:
 
@@ -189,7 +199,7 @@ Watershed Segmentation
 IoU: 0.02, Dice: 0.04
 ```
 
-## Conclusion and Observations
+### Conclusion and Observations
 
 - GMM provides robust segmentation when the foreground and background have distinct intensity distributions.
 - Otsu’s method is simple but may fail in cases with uneven lighting.
@@ -201,34 +211,21 @@ Each method has its strengths and weaknesses, making them suitable for different
 
 
 
-Subtask (d): Face Mask Segmentation using U-Net
--------------------------------------------------------------------------------
-
-#### **Introduction**  
-This part of the mini-project focuses on segmenting masked face regions using deep learning-based image segmentation techniques. The primary objective is to train a U-Net model to precisely detect and segment mask regions in images and compare its performance with traditional segmentation methods using evaluation metrics like Intersection over Union (IoU) and Dice Score.  
-
-### **Dataset**  
-
-The dataset used for this project contains face images with ground truth mask annotations. Each image has a corresponding binary mask that marks the mask region.  
-
-- **Source**: [Dataset](https://github.com/sadjadrz/MFSD).  
-- **Structure**:  
-  - `face_crop/` – Contains RGB face images.  
-  - `face_crop_segmentation/` – Corresponding grayscale mask images.  
+## Part D: Face Mask Segmentation using U-Net
 
 Each image and its corresponding mask were resized to a uniform dimension of **128×128** (or **256×256** in some experiments).  Due to computational constraints, the model was trained on a **subset of 1000 images** instead of the full dataset. This allowed for faster experimentation while maintaining strong segmentation performance.
 
----
 
-### **Data Preprocessing**  
-1. Images were read using OpenCV and converted to RGB format.  
-2. Resized to the chosen input size (**128×128** or **256×256**).  
-3. Normalized pixel values to the range **[0,1]**.  
-4. Masks were read as grayscale, resized, and expanded to include a single channel.  
 
----
+### Data Preprocessing 
+- Images were read using OpenCV and converted to RGB format.  
+- Resized to the chosen input size (**128×128** or **256×256**).  
+- Normalized pixel values to the range **[0,1]**.  
+- Masks were read as grayscale, resized, and expanded to include a single channel.  
 
-### **Model Architecture**  
+
+
+### Model Architecture  
 The U-Net model used in this project follows an encoder-decoder structure with skip connections to preserve spatial information. The key components of the architecture include:  
 
 1. **Convolutional Blocks:**  
@@ -343,3 +340,23 @@ U-Net was compared with a **threshold-based segmentation** method using **IoU an
    - U-Net can adapt to these variations, whereas traditional segmentation struggles with consistency.  
 
 Thus, U-Net **significantly outperforms** traditional methods in both **IoU and Dice Score**, making it a more reliable choice for precise mask segmentation.
+
+## Challenges Faced
+
+1. **Data-Related Challenges**
+
+- **Dataset Quality**: Some images were blurry, low resolution, or had occlusions, which affected model training and performance.
+- **Preprocessing Complexity**: Different datasets had varying resolutions, lighting conditions, and face orientations, requiring extensive preprocessing.
+
+2. **Feature Extraction & Traditional ML Issues**
+- **HOG Feature Selection**: Finding the right pixel and block size parameters for HOG to maximize accuracy was time-consuming.
+
+- **Hyperparameter Tuning for SVM and MLP**: Tuning SVM’s kernel and MLP’s architecture required multiple experiments with cross-validation.
+
+- **Computational Cost of GridSearchCV**: Running exhaustive hyperparameter tuning was computationally expensive.
+
+3. **Computational and Resource Limitations**
+- **Limited GPU Access**: Training CNNs and U-Net models on a CPU took significantly longer. GPU acceleration was needed but not always available.
+
+- **Memory Constraints**: Loading high-resolution images and large models consumed a lot of memory, leading to performance issues.
+
