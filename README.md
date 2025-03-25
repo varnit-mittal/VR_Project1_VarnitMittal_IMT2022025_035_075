@@ -334,7 +334,7 @@ _Example where the model's prediction closely matches the ground truth:_
 
 ---
 
-## **8. Hyperparameters and Experiments**  
+## **8. Experiments**  
 The following variations were explored:  
 
 | **Model Variant** | **Whole Dataset (IoU, Dice)** | **Validation Set (IoU, Dice)** |  
