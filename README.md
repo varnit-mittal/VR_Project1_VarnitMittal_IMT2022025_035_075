@@ -365,7 +365,7 @@ The following variations were explored:
 
 | **Model Variant** | **Whole Dataset (IoU, Dice)** | **Validation Set (IoU, Dice)** |  
 |------------------|----------------------------|----------------------------|  
-| BCE + Dice Loss | 80.23, 89.01 | 75.23, 85.d |  
+| BCE + Dice Loss | 80.23, 89.01 | 75.23, 85.11 |  
 | Dice Loss | 80.11, 89.21 | 77.29, 88.78 |  
 | BCE Loss | 80.15, 90.85 | 76.77, 86.81 |  
 | Leaky ReLU | 82.21, 89.73 | 76.12, 87.22 |  
